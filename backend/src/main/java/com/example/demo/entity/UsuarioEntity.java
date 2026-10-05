@@ -9,9 +9,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
+@Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
 public class UsuarioEntity {
@@ -45,4 +47,5 @@ public class UsuarioEntity {
 
     @Column(name = "ativo", nullable = false)
     private boolean ativo = true;
+
 }

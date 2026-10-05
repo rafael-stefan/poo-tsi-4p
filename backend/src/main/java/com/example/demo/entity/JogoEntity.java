@@ -18,7 +18,7 @@ public class JogoEntity {
     private Integer jogoId;
 
     @NotBlank
-    @Column(name = "titulo", nullable = false)
+    @Column(name = "titulo", nullable = false, unique = true)
     private String titulo;
 
     @Column(name = "genero")

@@ -1,6 +1,8 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,12 +25,14 @@ public class RegistroJogoEntity {
     @JoinColumn(name = "jogo_id", nullable = false)
     private JogoEntity jogo;
 
+    @PositiveOrZero
     @Column(name = "horas_jogo")
     private Integer horasJogo;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private StatusJogo status;
+    private StatusJogo status = StatusJogo.JOGANDO;
 
     @Column(name = "data_inicio")
     private LocalDate dataInicio;

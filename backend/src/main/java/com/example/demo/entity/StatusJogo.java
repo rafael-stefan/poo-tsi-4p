@@ -2,7 +2,7 @@ package com.example.demo.entity;
 
 
 public enum StatusJogo {
-    JOGANDO("Jogando", true, false),
+    JOGANDO("Jogando", false, false),
     ZERADO("Zerado", true, true),
     REJOGANDO("Rejogando", true, false),
     DESISTIDO("Desistido", true, false);
