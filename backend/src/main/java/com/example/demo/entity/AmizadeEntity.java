@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "amizades", check = @CheckConstraint(
   name = "ck_amizade_sem_autovinculo",
-  constraint = "id_solicitante <> id_destinatario"))
+  constraint = "solicitante_id <> destinatario_id"))
 @Getter
 @Setter
 public class AmizadeEntity {
