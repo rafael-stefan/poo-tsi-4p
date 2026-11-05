@@ -24,4 +24,7 @@ public interface AvaliacaoRepository extends JpaRepository<AvaliacaoEntity, Inte
     Double mediaPorJogo(@Param("jogoId") Integer jogoId);
 
     long countByRegistroJogo_Jogo_JogoId(Integer jogoId);
+
+    @Query("select coalesce(avg(a.nota), 0) from AvaliacaoEntity a where a.registroJogo.usuario.usuarioId = :id")
+    double mediaPorUsuario(@Param("id") Integer id);
 }

@@ -3,6 +3,8 @@ package com.example.demo.repository;
 import com.example.demo.entity.RegistroJogoEntity;
 import com.example.demo.entity.StatusJogo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -22,4 +24,12 @@ public interface RegistroJogoRepository extends JpaRepository<RegistroJogoEntity
     boolean existsByUsuario_UsuarioIdAndJogo_JogoIdAndStatusInAndRegistroJogoIdNot(Integer usuarioId, Integer jogoId, Collection<StatusJogo> status, Integer registroIdIgnorado);
 
     boolean existsByUsuario_UsuarioIdAndJogo_JogoIdAndStatusAndRegistroJogoIdNot(Integer usuarioId, Integer jogoId, StatusJogo status, Integer registroIdIgnorado);
+
+    @Query("select count(distinct r.jogo.jogoId) from RegistroJogoEntity r where r.usuario.usuarioId = :id and r.status in :status")
+    long contarJogosPorStatus(@Param("id") Integer id, @Param("status") Collection<StatusJogo> status);
+
+    long countByUsuario_UsuarioId(Integer usuarioId);
+
+    @Query("select coalesce(sum(r.horasJogo), 0) from RegistroJogoEntity r where r.usuario.usuarioId = :id")
+    long somarHoras(@Param("id") Integer id);
 }
