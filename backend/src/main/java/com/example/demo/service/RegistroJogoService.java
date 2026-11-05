@@ -19,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class RegistroJogoService {
@@ -61,9 +60,11 @@ public class RegistroJogoService {
     }
 
     @Transactional(readOnly = true)
-    public List<RegistroJogoResponse> listarMeus(Integer idSolicitante, StatusJogo status) {
+    public List<RegistroJogoResponse> listarMeus(Integer idSolicitante, StatusJogo status, Integer jogoId) {
         List<RegistroJogoEntity> registros;
-        if (status != null) {
+        if (jogoId != null) {
+            registros = registroJogoRepository.findByUsuario_UsuarioIdAndJogo_JogoIdOrderByDataInicioDesc(idSolicitante, jogoId);
+        } else if (status != null) {
             registros = registroJogoRepository.findByUsuario_UsuarioIdAndStatusOrderByDataInicioDesc(idSolicitante, status);
         } else {
             registros = registroJogoRepository.findByUsuario_UsuarioIdOrderByDataInicioDesc(idSolicitante);
@@ -108,12 +109,8 @@ public class RegistroJogoService {
     }
 
     private RegistroJogoResponse montarResposta(RegistroJogoEntity registro) {
-        Integer avaliacaoId = null;
-        Optional<AvaliacaoEntity> avaliacao = avaliacaoRepository.findByRegistroJogo_RegistroJogoId(registro.getRegistroJogoId());
-        if (avaliacao.isPresent()) {
-            avaliacaoId = avaliacao.get().getAvaliacaoId();
-        }
-        return RegistroJogoResponse.de(registro, avaliacaoId);
+        AvaliacaoEntity avaliacao = avaliacaoRepository.findByRegistroJogo_RegistroJogoId(registro.getRegistroJogoId()).orElse(null);
+        return RegistroJogoResponse.de(registro, avaliacao);
     }
 
     private RegistroJogoEntity buscarDoDono(Integer idSolicitante, Integer id) {

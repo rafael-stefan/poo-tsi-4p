@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AmizadeRepository extends JpaRepository<AmizadeEntity, Integer> {
@@ -18,6 +19,9 @@ public interface AmizadeRepository extends JpaRepository<AmizadeEntity, Integer>
 
     @Query("select a from AmizadeEntity a where (a.solicitante.usuarioId = :idUsuario or a.destinatario.usuarioId = :idUsuario) and a.status = com.example.demo.entity.StatusAmizade.ACEITA order by a.dataAmizade desc")
     List<AmizadeEntity> listarAceitas(@Param("idUsuario") Integer idUsuario);
+
+    @Query("select a from AmizadeEntity a where ((a.solicitante.usuarioId = :a and a.destinatario.usuarioId = :b) or (a.solicitante.usuarioId = :b and a.destinatario.usuarioId = :a)) and a.status = com.example.demo.entity.StatusAmizade.ACEITA")
+    Optional<AmizadeEntity> buscarAceitaEntre(@Param("a") Integer a, @Param("b") Integer b);
 
     List<AmizadeEntity> findByDestinatario_UsuarioIdAndStatusOrderByDataAmizadeDesc(Integer id, StatusAmizade status);
 

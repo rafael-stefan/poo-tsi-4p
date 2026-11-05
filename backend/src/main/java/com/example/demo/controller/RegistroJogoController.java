@@ -39,8 +39,9 @@ public class RegistroJogoController {
 
     @GetMapping
     public List<RegistroJogoResponse> listarMeus(@IdSolicitante Integer idSolicitante,
-                                                 @RequestParam(required = false) StatusJogo status) {
-        return registroJogoService.listarMeus(idSolicitante, status);
+                                                 @RequestParam(required = false) StatusJogo status,
+                                                 @RequestParam(required = false) Integer jogoId) {
+        return registroJogoService.listarMeus(idSolicitante, status, jogoId);
     }
 
     @GetMapping("/{id}")

@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.response.AmizadeResumoResponse;
 import com.example.demo.dto.response.AvaliacaoResponse;
 import com.example.demo.dto.response.PerfilResponse;
 import com.example.demo.dto.response.RegistroJogoResponse;
 import com.example.demo.dto.response.UsuarioResumoResponse;
+import com.example.demo.entity.AmizadeEntity;
 import com.example.demo.entity.AvaliacaoEntity;
 import com.example.demo.entity.RegistroJogoEntity;
 import com.example.demo.entity.StatusAmizade;
@@ -23,7 +25,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class PerfilService {
@@ -65,7 +66,15 @@ public class PerfilService {
             avaliacoes.add(AvaliacaoResponse.de(avaliacao));
         }
 
-        return new PerfilResponse(UsuarioResumoResponse.de(usuario), calcularEstatisticas(idUsuario), jogosPorStatus, avaliacoes);
+        AmizadeResumoResponse amizade = null;
+        if (!idSolicitante.equals(idUsuario)) {
+            AmizadeEntity entidade = amizadeRepository.buscarAceitaEntre(idSolicitante, idUsuario).orElse(null);
+            if (entidade != null) {
+                amizade = AmizadeResumoResponse.de(entidade);
+            }
+        }
+
+        return new PerfilResponse(UsuarioResumoResponse.de(usuario), calcularEstatisticas(idUsuario), jogosPorStatus, avaliacoes, amizade);
     }
 
     @Transactional(readOnly = true)
@@ -93,11 +102,7 @@ public class PerfilService {
     }
 
     private RegistroJogoResponse montarRegistro(RegistroJogoEntity registro) {
-        Integer avaliacaoId = null;
-        Optional<AvaliacaoEntity> avaliacao = avaliacaoRepository.findByRegistroJogo_RegistroJogoId(registro.getRegistroJogoId());
-        if (avaliacao.isPresent()) {
-            avaliacaoId = avaliacao.get().getAvaliacaoId();
-        }
-        return RegistroJogoResponse.de(registro, avaliacaoId);
+        AvaliacaoEntity avaliacao = avaliacaoRepository.findByRegistroJogo_RegistroJogoId(registro.getRegistroJogoId()).orElse(null);
+        return RegistroJogoResponse.de(registro, avaliacao);
     }
 }

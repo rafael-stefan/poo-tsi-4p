@@ -24,6 +24,9 @@ public class JogoEntity {
     @Column(name = "genero")
     private String genero;
 
+    @Column(name = "capa", length = 150)
+    private String capa;
+
     @ElementCollection
     @CollectionTable(name = "jogo_plataforma", joinColumns = @JoinColumn(name = "jogo_id"))
     @Enumerated(EnumType.STRING)

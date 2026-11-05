@@ -6,7 +6,11 @@ import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "registros_jogo")
@@ -39,6 +43,14 @@ public class RegistroJogoEntity {
 
     @Column(name = "data_conclusao")
     private LocalDate dataConclusao;
+
+    @CreationTimestamp
+    @Column(name = "criado_em", updatable = false)
+    private LocalDateTime criadoEm;
+
+    @UpdateTimestamp
+    @Column(name = "atualizado_em")
+    private LocalDateTime atualizadoEm;
 
     public boolean pertenceAo(Integer idUsuario) {
         return usuario.getUsuarioId().equals(idUsuario);

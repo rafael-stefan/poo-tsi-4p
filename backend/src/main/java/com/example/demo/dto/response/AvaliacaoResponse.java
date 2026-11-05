@@ -2,6 +2,7 @@ package com.example.demo.dto.response;
 
 import com.example.demo.entity.AvaliacaoEntity;
 import com.example.demo.entity.RegistroJogoEntity;
+import com.example.demo.entity.StatusJogo;
 
 import java.time.LocalDateTime;
 
@@ -15,7 +16,9 @@ public record AvaliacaoResponse(
     Double nota,
     String comentario,
     Integer horasJogo,
-    LocalDateTime dataAvaliacao
+    LocalDateTime dataAvaliacao,
+    StatusJogo statusRun,
+    String capaJogo
 ) {
     public static AvaliacaoResponse de(AvaliacaoEntity avaliacao) {
         RegistroJogoEntity registro = avaliacao.getRegistroJogo();
@@ -29,7 +32,9 @@ public record AvaliacaoResponse(
             avaliacao.getNota(),
             avaliacao.getComentario(),
             registro.getHorasJogo(),
-            avaliacao.getDataAvaliacao()
+            avaliacao.getDataAvaliacao(),
+            registro.getStatus(),
+            registro.getJogo().getCapa()
         );
     }
 }

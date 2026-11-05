@@ -10,6 +10,7 @@ public record PerfilResponse(
     UsuarioResumoResponse usuario,
     Estatisticas estatisticas,
     Map<StatusJogo, List<RegistroJogoResponse>> jogosPorStatus,
-    List<AvaliacaoResponse> avaliacoes
+    List<AvaliacaoResponse> avaliacoes,
+    AmizadeResumoResponse amizade
 ) {
 }

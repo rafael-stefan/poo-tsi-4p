@@ -1,8 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.response.AvaliacaoResponse;
+import com.example.demo.dto.response.EstatisticasJogoResponse;
 import com.example.demo.dto.response.JogoResponse;
 import com.example.demo.dto.response.PlataformaResponse;
+import com.example.demo.entity.PlataformaJogo;
 import com.example.demo.service.AvaliacaoService;
 import com.example.demo.service.JogoService;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +29,15 @@ public class JogoController {
 
     @GetMapping
     public List<JogoResponse> pesquisar(@RequestParam(required = false) String titulo,
-                                        @RequestParam(required = false) String genero) {
-        return jogoService.pesquisar(titulo, genero);
+                                        @RequestParam(required = false) String genero,
+                                        @RequestParam(required = false) PlataformaJogo plataforma,
+                                        @RequestParam(required = false) String ordem) {
+        return jogoService.pesquisar(titulo, genero, plataforma, ordem);
+    }
+
+    @GetMapping("/generos")
+    public List<String> listarGeneros() {
+        return jogoService.listarGeneros();
     }
 
     @GetMapping("/plataformas")
@@ -39,6 +48,11 @@ public class JogoController {
     @GetMapping("/{id}")
     public JogoResponse buscarPorId(@PathVariable Integer id) {
         return jogoService.buscarPorId(id);
+    }
+
+    @GetMapping("/{id}/estatisticas")
+    public EstatisticasJogoResponse estatisticas(@PathVariable Integer id) {
+        return jogoService.estatisticas(id);
     }
 
     @GetMapping("/{id}/avaliacoes")
