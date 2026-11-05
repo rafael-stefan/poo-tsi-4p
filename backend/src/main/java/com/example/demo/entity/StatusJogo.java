@@ -22,4 +22,6 @@ public enum StatusJogo {
     public Boolean getPermiteAvaliacao() { return permiteAvaliacao; }
 
     public Boolean getExigeDataConclusao() { return exigeDataConclusao; }
+
+    public boolean emAndamento() { return this == JOGANDO || this == REJOGANDO; }
 }

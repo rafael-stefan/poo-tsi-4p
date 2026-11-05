@@ -2,7 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,13 +25,13 @@ public class RegistroJogoEntity {
     @JoinColumn(name = "jogo_id", nullable = false)
     private JogoEntity jogo;
 
-    @PositiveOrZero
+    @Positive
     @Column(name = "horas_jogo")
     private Integer horasJogo;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 20)
     private StatusJogo status = StatusJogo.JOGANDO;
 
     @Column(name = "data_inicio")
@@ -39,4 +39,12 @@ public class RegistroJogoEntity {
 
     @Column(name = "data_conclusao")
     private LocalDate dataConclusao;
+
+    public boolean pertenceAo(Integer idUsuario) {
+        return usuario.getUsuarioId().equals(idUsuario);
+    }
+
+    public boolean podeSerAvaliado() {
+        return status.getPermiteAvaliacao();
+    }
 }
