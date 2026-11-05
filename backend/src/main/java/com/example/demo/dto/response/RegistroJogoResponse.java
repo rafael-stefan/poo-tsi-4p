@@ -12,9 +12,10 @@ public record RegistroJogoResponse(
     StatusJogo status,
     LocalDate dataInicio,
     LocalDate dataConclusao,
-    Integer horasJogo
+    Integer horasJogo,
+    Integer avaliacaoId
 ) {
-    public static RegistroJogoResponse de(RegistroJogoEntity registro) {
+    public static RegistroJogoResponse de(RegistroJogoEntity registro, Integer avaliacaoId) {
         return new RegistroJogoResponse(
             registro.getRegistroJogoId(),
             registro.getJogo().getJogoId(),
@@ -22,7 +23,8 @@ public record RegistroJogoResponse(
             registro.getStatus(),
             registro.getDataInicio(),
             registro.getDataConclusao(),
-            registro.getHorasJogo()
+            registro.getHorasJogo(),
+            avaliacaoId
         );
     }
 }

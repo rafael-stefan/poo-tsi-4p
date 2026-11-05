@@ -31,11 +31,15 @@ public class AvaliacaoEntity {
     private String comentario;
 
     @CreationTimestamp
-    @Column(name = "data_avaliacao")
+    @Column(name = "data_avaliacao", updatable = false, nullable = false)
     private LocalDateTime dataAvaliacao;
 
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "registro_jogo_id", nullable = false, unique = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private RegistroJogoEntity registroJogo;
+
+    public boolean pertenceAo(Integer idUsuario) {
+        return registroJogo.pertenceAo(idUsuario);
+    }
 }

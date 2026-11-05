@@ -3,9 +3,11 @@ package com.example.demo.service;
 import com.example.demo.dto.request.AtualizarRegistroRequest;
 import com.example.demo.dto.request.RegistroJogoRequest;
 import com.example.demo.dto.response.RegistroJogoResponse;
+import com.example.demo.entity.AvaliacaoEntity;
 import com.example.demo.entity.JogoEntity;
 import com.example.demo.entity.RegistroJogoEntity;
 import com.example.demo.entity.StatusJogo;
+import com.example.demo.repository.AvaliacaoRepository;
 import com.example.demo.repository.JogoRepository;
 import com.example.demo.repository.RegistroJogoRepository;
 import com.example.demo.repository.UsuarioRepository;
@@ -17,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class RegistroJogoService {
@@ -24,11 +27,13 @@ public class RegistroJogoService {
     private final RegistroJogoRepository registroJogoRepository;
     private final JogoRepository jogoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final AvaliacaoRepository avaliacaoRepository;
 
-    public RegistroJogoService(RegistroJogoRepository registroJogoRepository, JogoRepository jogoRepository, UsuarioRepository usuarioRepository) {
+    public RegistroJogoService(RegistroJogoRepository registroJogoRepository, JogoRepository jogoRepository, UsuarioRepository usuarioRepository, AvaliacaoRepository avaliacaoRepository) {
         this.registroJogoRepository = registroJogoRepository;
         this.jogoRepository = jogoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.avaliacaoRepository = avaliacaoRepository;
     }
 
     @Transactional
@@ -52,7 +57,7 @@ public class RegistroJogoService {
         registro.setDataConclusao(request.dataConclusao());
         registro.setHorasJogo(request.horasJogo());
 
-        return RegistroJogoResponse.de(registroJogoRepository.save(registro));
+        return montarResposta(registroJogoRepository.save(registro));
     }
 
     @Transactional(readOnly = true)
@@ -66,14 +71,14 @@ public class RegistroJogoService {
 
         List<RegistroJogoResponse> resposta = new ArrayList<>();
         for (RegistroJogoEntity registro : registros) {
-            resposta.add(RegistroJogoResponse.de(registro));
+            resposta.add(montarResposta(registro));
         }
         return resposta;
     }
 
     @Transactional(readOnly = true)
     public RegistroJogoResponse buscar(Integer idSolicitante, Integer id) {
-        return RegistroJogoResponse.de(buscarDoDono(idSolicitante, id));
+        return montarResposta(buscarDoDono(idSolicitante, id));
     }
 
     @Transactional
@@ -93,13 +98,22 @@ public class RegistroJogoService {
         registro.setDataConclusao(request.dataConclusao());
         registro.setHorasJogo(request.horasJogo());
 
-        return RegistroJogoResponse.de(registroJogoRepository.save(registro));
+        return montarResposta(registroJogoRepository.save(registro));
     }
 
     @Transactional
     public void remover(Integer idSolicitante, Integer id) {
         RegistroJogoEntity registro = buscarDoDono(idSolicitante, id);
         registroJogoRepository.delete(registro);
+    }
+
+    private RegistroJogoResponse montarResposta(RegistroJogoEntity registro) {
+        Integer avaliacaoId = null;
+        Optional<AvaliacaoEntity> avaliacao = avaliacaoRepository.findByRegistroJogo_RegistroJogoId(registro.getRegistroJogoId());
+        if (avaliacao.isPresent()) {
+            avaliacaoId = avaliacao.get().getAvaliacaoId();
+        }
+        return RegistroJogoResponse.de(registro, avaliacaoId);
     }
 
     private RegistroJogoEntity buscarDoDono(Integer idSolicitante, Integer id) {

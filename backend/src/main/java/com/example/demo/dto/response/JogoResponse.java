@@ -12,11 +12,13 @@ public record JogoResponse(
     String genero,
     Set<PlataformaJogo> plataformas,
     String desenvolvedora,
-    Integer anoLancamento
+    Integer anoLancamento,
+    Double notaMedia,
+    long totalAvaliacoes
 ) {
-    public static JogoResponse de(JogoEntity jogo) {
+    public static JogoResponse de(JogoEntity jogo, Double notaMedia, long totalAvaliacoes) {
         Set<PlataformaJogo> plataformas = EnumSet.noneOf(PlataformaJogo.class);
         plataformas.addAll(jogo.getPlataformas());
-        return new JogoResponse(jogo.getJogoId(), jogo.getTitulo(), jogo.getGenero(), plataformas, jogo.getDesenvolvedora(), jogo.getAnoLancamento());
+        return new JogoResponse(jogo.getJogoId(), jogo.getTitulo(), jogo.getGenero(), plataformas, jogo.getDesenvolvedora(), jogo.getAnoLancamento(), notaMedia, totalAvaliacoes);
     }
 }

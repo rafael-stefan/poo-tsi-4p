@@ -5,6 +5,7 @@ import com.example.demo.dto.response.JogoResponse;
 import com.example.demo.dto.response.PlataformaResponse;
 import com.example.demo.entity.JogoEntity;
 import com.example.demo.entity.PlataformaJogo;
+import com.example.demo.repository.AvaliacaoRepository;
 import com.example.demo.repository.JogoRepository;
 import com.example.demo.repository.RegistroJogoRepository;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,12 @@ public class JogoService {
 
     private final JogoRepository jogoRepository;
     private final RegistroJogoRepository registroJogoRepository;
+    private final AvaliacaoRepository avaliacaoRepository;
 
-    public JogoService(JogoRepository jogoRepository, RegistroJogoRepository registroJogoRepository) {
+    public JogoService(JogoRepository jogoRepository, RegistroJogoRepository registroJogoRepository, AvaliacaoRepository avaliacaoRepository) {
         this.jogoRepository = jogoRepository;
         this.registroJogoRepository = registroJogoRepository;
+        this.avaliacaoRepository = avaliacaoRepository;
     }
 
     @Transactional(readOnly = true)
@@ -39,7 +42,7 @@ public class JogoService {
 
         List<JogoResponse> resposta = new ArrayList<>();
         for (JogoEntity jogo : jogos) {
-            resposta.add(JogoResponse.de(jogo));
+            resposta.add(montarResposta(jogo));
         }
         return resposta;
     }
@@ -48,7 +51,7 @@ public class JogoService {
     public JogoResponse buscarPorId(Integer id) {
         JogoEntity jogo = jogoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Jogo não encontrado"));
-        return JogoResponse.de(jogo);
+        return montarResposta(jogo);
     }
 
     public List<PlataformaResponse> listarPlataformas() {
@@ -73,7 +76,7 @@ public class JogoService {
         jogo.setDesenvolvedora(request.desenvolvedora());
         jogo.setAnoLancamento(request.anoLancamento());
 
-        return JogoResponse.de(jogoRepository.save(jogo));
+        return montarResposta(jogoRepository.save(jogo));
     }
 
     @Transactional
@@ -93,7 +96,7 @@ public class JogoService {
         jogo.setDesenvolvedora(request.desenvolvedora());
         jogo.setAnoLancamento(request.anoLancamento());
 
-        return JogoResponse.de(jogoRepository.save(jogo));
+        return montarResposta(jogoRepository.save(jogo));
     }
 
     @Transactional
@@ -106,5 +109,11 @@ public class JogoService {
         }
 
         jogoRepository.delete(jogo);
+    }
+
+    private JogoResponse montarResposta(JogoEntity jogo) {
+        Double notaMedia = avaliacaoRepository.mediaPorJogo(jogo.getJogoId());
+        long total = avaliacaoRepository.countByRegistroJogo_Jogo_JogoId(jogo.getJogoId());
+        return JogoResponse.de(jogo, notaMedia, total);
     }
 }
