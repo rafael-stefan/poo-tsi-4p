@@ -31,7 +31,7 @@ export default function MenuUsuario() {
         <DropdownMenuLabel className="truncate">{usuario.nome}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href={"/perfil/" + usuario.id}>Meu perfil</Link>
+          <Link href="/perfil/me">Meu perfil</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/biblioteca">Biblioteca</Link>
