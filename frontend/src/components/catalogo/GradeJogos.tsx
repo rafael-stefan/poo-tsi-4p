@@ -25,7 +25,6 @@ function montarCaminho(titulo: string, genero: string, plataforma: string): stri
   if (titulo !== "") consulta.set("titulo", titulo);
   if (genero !== "") consulta.set("genero", genero);
   if (plataforma !== "") consulta.set("plataforma", plataforma);
-  consulta.set("ordem", "recentes");
   return "/jogos?" + consulta.toString();
 }
 
