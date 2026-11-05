@@ -3,18 +3,20 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
 @Inheritance(strategy = InheritanceType.JOINED)
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Setter
 public class UsuarioEntity {
@@ -39,7 +41,7 @@ public class UsuarioEntity {
     private String fotoPerfil;
 
     @CreationTimestamp
-    @Column(name = "data_criacao", nullable = false)
+    @Column(name = "data_criacao", nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
 
     @UpdateTimestamp
@@ -49,10 +51,18 @@ public class UsuarioEntity {
     @Column(name = "ativo", nullable = false)
     private boolean ativo = true;
 
-    public UsuarioEntity(@NotBlank String nome, @NotBlank @Email String email, @NotBlank @Size(min = 8, max = 72) String senha, String s) {
+    public UsuarioEntity(String nome, String email, String senhaHash, String fotoPerfil) {
         this.nome = nome;
         this.email = email;
-        this.senha = senha;
-        this.fotoPerfil = s;
+        this.senha = senhaHash;
+        this.fotoPerfil = fotoPerfil;
+    }
+
+    public boolean validarIdentidade(Integer idSolicitante) {
+        return idSolicitante != null && idSolicitante.equals(usuarioId);
+    }
+
+    public boolean validarSenha(String senha, PasswordEncoder encoder) {
+        return senha != null && encoder.matches(senha, this.senha);
     }
 }
