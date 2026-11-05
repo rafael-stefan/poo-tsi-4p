@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.RegisterRequest;
 import com.example.demo.dto.response.CadastroResponse;
-import com.example.demo.dto.response.LoginResponse;
 import com.example.demo.entity.UsuarioEntity;
 import com.example.demo.security.UsuarioAutenticado;
 import com.example.demo.security.UsuarioSessao;
@@ -50,17 +49,17 @@ public class AuthService {
         return CadastroResponse.de(usuarioService.save(user));
     }
 
-   public UsuarioAutenticado autenticar(LoginRequest request) {
-    try {
-        Authentication auth = authenticationManager.authenticate(
-            UsernamePasswordAuthenticationToken.unauthenticated(request.email(), request.senha()));
-        return (UsuarioAutenticado) auth.getPrincipal();
-    } catch (AuthenticationException e) {
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-mail ou senha inválidos");
+    public UsuarioAutenticado autenticar(LoginRequest request) {
+        try {
+            Authentication auth = authenticationManager.authenticate(
+                    UsernamePasswordAuthenticationToken.unauthenticated(request.email(), request.senha()));
+            return (UsuarioAutenticado) auth.getPrincipal();
+        } catch (AuthenticationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-mail ou senha inválidos");
         }
     }
 
-    public void logout(UsuarioSessao usuario) {
-        tokenRevogadoRepository.save(new TokenRevogadoEntity(usuario.jti(), usuario.expiraEm()));
+    public void logout(UsuarioSessao sessao) {
+        tokenRevogadoRepository.save(new TokenRevogadoEntity(sessao.jti(), sessao.expiraEm()));
     }
 }

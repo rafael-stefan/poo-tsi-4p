@@ -1,7 +1,5 @@
 package com.example.demo.security.jwt;
 
-import com.example.demo.security.UsuarioAutenticado;
-import com.example.demo.security.UsuarioAutenticadoDetailsService;
 import com.example.demo.security.UsuarioSessao;
 import com.example.demo.security.jwt.revogar.TokenRevogadoRepository;
 import jakarta.servlet.FilterChain;
@@ -36,24 +34,23 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         Cookie cookie = WebUtils.getCookie(request, JwtService.COOKIE_TOKEN);
         if (cookie != null) {
-            String token = cookie.getValue();
-            jwtService.validar(token).ifPresent(this::autenticar);
+            Optional<TokenValido> token = jwtService.validar(cookie.getValue());
+            if (token.isPresent() && !tokenRevogadoRepository.existsById(token.get().jti())) {
+                autenticar(token.get());
+            }
         }
         filterChain.doFilter(request, response);
     }
 
-    private void autenticar(TokenValido token){
-        UsuarioSessao usuario = new UsuarioSessao(token.usuarioId(),token.jti(), token.expiraEm());
+    private void autenticar(TokenValido token) {
+        UsuarioSessao usuario = new UsuarioSessao(token.usuarioId(), token.jti(), token.expiraEm());
         List<GrantedAuthority> authorities = token.roles().stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        if(!tokenRevogadoRepository.existsById(token.jti())){
-            UsernamePasswordAuthenticationToken auth = UsernamePasswordAuthenticationToken.authenticated(usuario, null, authorities);
-            SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(auth);
-            SecurityContextHolder.setContext(context);
-        }
-
+        UsernamePasswordAuthenticationToken auth = UsernamePasswordAuthenticationToken.authenticated(usuario, null, authorities);
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(auth);
+        SecurityContextHolder.setContext(context);
     }
 }
