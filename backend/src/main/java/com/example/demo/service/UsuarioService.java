@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.response.UsuarioResponse;
 import com.example.demo.entity.UsuarioEntity;
 import com.example.demo.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,9 @@ public class UsuarioService {
 
     public UsuarioEntity save(UsuarioEntity usuario) {
         return usuarioRepository.save(usuario);
+    }
+
+    public UsuarioResponse buscarPerfil(Integer idSolicitante) {
+        return UsuarioResponse.de(findById(idSolicitante));
     }
 }
