@@ -1,5 +1,6 @@
 package com.example.demo.exception;
 
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problema.setDetail("Dados inválidos");
         problema.setProperty("erros", erros);
         return ResponseEntity.status(status).body(problema);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers,
+                                                        HttpStatusCode status, WebRequest request) {
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Parâmetro inválido: " + ex.getPropertyName());
+        return ResponseEntity.badRequest().body(problema);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
