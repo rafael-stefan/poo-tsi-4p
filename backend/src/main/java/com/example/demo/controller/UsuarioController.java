@@ -1,10 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.request.EditarPerfilRequest;
 import com.example.demo.dto.response.UsuarioResponse;
 import com.example.demo.dto.response.UsuarioResumoResponse;
 import com.example.demo.security.IdSolicitante;
 import com.example.demo.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +33,11 @@ public class UsuarioController {
     @GetMapping("/me")
     public UsuarioResponse me(@IdSolicitante Integer idSolicitante) {
         return usuarioService.buscarPerfil(idSolicitante);
+    }
+
+    @PutMapping("/me")
+    public UsuarioResponse editarPerfil(@IdSolicitante Integer idSolicitante, @Valid @RequestBody EditarPerfilRequest request) {
+        return usuarioService.editarPerfil(idSolicitante, request);
     }
 
     @GetMapping("/busca")

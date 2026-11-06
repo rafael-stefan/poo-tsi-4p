@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.request.AlterarSenhaRequest;
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.RegisterRequest;
 import com.example.demo.dto.response.CadastroResponse;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,6 +56,15 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@AuthenticationPrincipal UsuarioSessao sessao) {
         authService.logout(sessao);
+        return ResponseEntity.noContent()
+                .header(HttpHeaders.SET_COOKIE, cookieDoToken("", Duration.ZERO).toString())
+                .build();
+    }
+
+    @PutMapping("/senha")
+    public ResponseEntity<Void> alterarSenha(@AuthenticationPrincipal UsuarioSessao sessao,
+                                             @Valid @RequestBody AlterarSenhaRequest request) {
+        authService.alterarSenha(sessao, request);
         return ResponseEntity.noContent()
                 .header(HttpHeaders.SET_COOKIE, cookieDoToken("", Duration.ZERO).toString())
                 .build();

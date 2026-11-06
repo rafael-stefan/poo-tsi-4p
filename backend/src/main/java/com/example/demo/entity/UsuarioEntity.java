@@ -65,4 +65,13 @@ public class UsuarioEntity {
     public boolean validarSenha(String senha, PasswordEncoder encoder) {
         return senha != null && encoder.matches(senha, this.senha);
     }
+
+    public void editarPerfil(String nome, String fotoPerfil) {
+        this.nome = nome;
+        this.fotoPerfil = fotoPerfil;
+    }
+
+    public void alterarSenha(String novaSenhaHash) {
+        this.senha = novaSenhaHash;
+    }
 }

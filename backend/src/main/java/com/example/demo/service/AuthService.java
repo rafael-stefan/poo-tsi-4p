@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.request.AlterarSenhaRequest;
 import com.example.demo.dto.request.LoginRequest;
 import com.example.demo.dto.request.RegisterRequest;
 import com.example.demo.dto.response.CadastroResponse;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 
@@ -57,6 +59,20 @@ public class AuthService {
         } catch (AuthenticationException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "E-mail ou senha inválidos");
         }
+    }
+
+    @Transactional
+    public void alterarSenha(UsuarioSessao sessao, AlterarSenhaRequest request) {
+        UsuarioEntity usuario = usuarioService.findById(sessao.usuarioId());
+        if (!usuario.validarSenha(request.senhaAtual(), passwordEncoder)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Senha atual incorreta");
+        }
+        if (usuario.validarSenha(request.novaSenha(), passwordEncoder)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A nova senha deve ser diferente da atual");
+        }
+        usuario.alterarSenha(passwordEncoder.encode(request.novaSenha()));
+        usuarioService.save(usuario);
+        logout(sessao);
     }
 
     public void logout(UsuarioSessao sessao) {

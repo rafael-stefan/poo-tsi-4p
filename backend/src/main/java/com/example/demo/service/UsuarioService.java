@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.request.EditarPerfilRequest;
 import com.example.demo.dto.response.UsuarioResponse;
 import com.example.demo.dto.response.UsuarioResumoResponse;
 import com.example.demo.entity.UsuarioEntity;
@@ -7,6 +8,7 @@ import com.example.demo.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
@@ -40,6 +42,14 @@ public class UsuarioService {
 
     public UsuarioResponse buscarPerfil(Integer idSolicitante) {
         return UsuarioResponse.de(findById(idSolicitante));
+    }
+
+    @Transactional
+    public UsuarioResponse editarPerfil(Integer idSolicitante, EditarPerfilRequest request) {
+        UsuarioEntity usuario = findById(idSolicitante);
+        String foto = request.fotoPerfil() == null || request.fotoPerfil().isBlank() ? null : request.fotoPerfil().trim();
+        usuario.editarPerfil(request.nome().trim(), foto);
+        return UsuarioResponse.de(usuarioRepository.save(usuario));
     }
 
     public List<UsuarioResumoResponse> buscarPorNome(String nome, Integer idSolicitante) {
