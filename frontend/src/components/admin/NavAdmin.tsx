@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const abas = [
   { texto: "Jogos", href: "/admin/jogos" },
   { texto: "Usuários", href: "/admin/usuarios" },
+  { texto: "Auditoria", href: "/admin/auditoria" },
 ];
 
 export default function NavAdmin() {

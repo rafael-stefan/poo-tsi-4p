@@ -173,3 +173,14 @@ export type JogoRequisicao = {
   desenvolvedora?: string | null;
   anoLancamento?: number | null;
 };
+
+export type LogAuditoria = {
+  id: number;
+  dataHora: string;
+  usuarioId: number | null;
+  nomeUsuario: string | null;
+  ip: string | null;
+  metodo: string;
+  rota: string;
+  status: number;
+};
