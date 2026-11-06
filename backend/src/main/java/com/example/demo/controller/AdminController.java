@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.auditoria.LogAuditoriaResponse;
 import com.example.demo.dto.request.PromoverAdminRequest;
 import com.example.demo.dto.response.UsuarioAdminResponse;
 import com.example.demo.security.IdSolicitante;
@@ -25,6 +26,11 @@ public class AdminController {
 
     public AdminController(AdminService adminService) {
         this.adminService = adminService;
+    }
+
+    @GetMapping("/auditoria")
+    public List<LogAuditoriaResponse> listarAuditoria() {
+        return adminService.listarAuditoria();
     }
 
     @GetMapping("/usuarios")

@@ -1,14 +1,27 @@
 package com.example.demo.security.config;
 
+import com.example.demo.auditoria.AuditoriaInterceptor;
 import com.example.demo.security.IdSolicitanteResolver;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    private final AuditoriaInterceptor auditoriaInterceptor;
+
+    public WebConfig(AuditoriaInterceptor auditoriaInterceptor) {
+        this.auditoriaInterceptor = auditoriaInterceptor;
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(auditoriaInterceptor);
+    }
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {

@@ -9,6 +9,8 @@ import com.example.demo.security.UsuarioAutenticado;
 import com.example.demo.security.UsuarioSessao;
 import com.example.demo.security.jwt.JwtService;
 import com.example.demo.service.AuthService;
+import com.example.demo.auditoria.AuditoriaInterceptor;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -45,8 +47,9 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request, HttpServletRequest servletRequest) {
         UsuarioAutenticado usuario = authService.autenticar(request);
+        servletRequest.setAttribute(AuditoriaInterceptor.ATRIBUTO_USUARIO, usuario.getUsuarioId());
         String token = jwtService.gerarToken(usuario);
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookieDoToken(token, jwtService.getExpiracao()).toString())

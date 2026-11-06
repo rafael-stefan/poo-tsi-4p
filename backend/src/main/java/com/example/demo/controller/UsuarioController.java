@@ -4,7 +4,9 @@ import com.example.demo.dto.request.EditarPerfilRequest;
 import com.example.demo.dto.response.UsuarioResponse;
 import com.example.demo.dto.response.UsuarioResumoResponse;
 import com.example.demo.security.IdSolicitante;
+import com.example.demo.security.limite.LimiteRequisicoes;
 import com.example.demo.service.UsuarioService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -20,9 +22,11 @@ import java.util.List;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final LimiteRequisicoes limiteRequisicoes;
 
-    public UsuarioController(UsuarioService usuarioService) {
+    public UsuarioController(UsuarioService usuarioService, LimiteRequisicoes limiteRequisicoes) {
         this.usuarioService = usuarioService;
+        this.limiteRequisicoes = limiteRequisicoes;
     }
 
     @GetMapping
@@ -41,7 +45,9 @@ public class UsuarioController {
     }
 
     @GetMapping("/busca")
-    public List<UsuarioResumoResponse> buscar(@RequestParam String nome, @IdSolicitante Integer idSolicitante) {
+    public List<UsuarioResumoResponse> buscar(@RequestParam String nome, @IdSolicitante Integer idSolicitante,
+                                              HttpServletRequest request) {
+        limiteRequisicoes.verificarBusca(request);
         return usuarioService.buscarPorNome(nome, idSolicitante);
     }
 }

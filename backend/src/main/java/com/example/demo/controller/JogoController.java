@@ -5,8 +5,10 @@ import com.example.demo.dto.response.EstatisticasJogoResponse;
 import com.example.demo.dto.response.JogoResponse;
 import com.example.demo.dto.response.PlataformaResponse;
 import com.example.demo.entity.PlataformaJogo;
+import com.example.demo.security.limite.LimiteRequisicoes;
 import com.example.demo.service.AvaliacaoService;
 import com.example.demo.service.JogoService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,17 +23,21 @@ public class JogoController {
 
     private final JogoService jogoService;
     private final AvaliacaoService avaliacaoService;
+    private final LimiteRequisicoes limiteRequisicoes;
 
-    public JogoController(JogoService jogoService, AvaliacaoService avaliacaoService) {
+    public JogoController(JogoService jogoService, AvaliacaoService avaliacaoService, LimiteRequisicoes limiteRequisicoes) {
         this.jogoService = jogoService;
         this.avaliacaoService = avaliacaoService;
+        this.limiteRequisicoes = limiteRequisicoes;
     }
 
     @GetMapping
     public List<JogoResponse> pesquisar(@RequestParam(required = false) String titulo,
                                         @RequestParam(required = false) String genero,
                                         @RequestParam(required = false) PlataformaJogo plataforma,
-                                        @RequestParam(required = false) String ordem) {
+                                        @RequestParam(required = false) String ordem,
+                                        HttpServletRequest request) {
+        limiteRequisicoes.verificarBusca(request);
         return jogoService.pesquisar(titulo, genero, plataforma, ordem);
     }
 

@@ -1,10 +1,13 @@
 package com.example.demo.service;
 
+import com.example.demo.auditoria.LogAuditoriaRepository;
+import com.example.demo.auditoria.LogAuditoriaResponse;
 import com.example.demo.dto.request.PromoverAdminRequest;
 import com.example.demo.dto.response.UsuarioAdminResponse;
 import com.example.demo.entity.UsuarioEntity;
 import com.example.demo.repository.AvaliacaoRepository;
 import com.example.demo.repository.UsuarioRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,10 +21,18 @@ public class AdminService {
 
     private final UsuarioRepository usuarioRepository;
     private final AvaliacaoRepository avaliacaoRepository;
+    private final LogAuditoriaRepository logAuditoriaRepository;
 
-    public AdminService(UsuarioRepository usuarioRepository, AvaliacaoRepository avaliacaoRepository) {
+    public AdminService(UsuarioRepository usuarioRepository, AvaliacaoRepository avaliacaoRepository,
+                        LogAuditoriaRepository logAuditoriaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.avaliacaoRepository = avaliacaoRepository;
+        this.logAuditoriaRepository = logAuditoriaRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public List<LogAuditoriaResponse> listarAuditoria() {
+        return logAuditoriaRepository.listarRecentes(PageRequest.of(0, 200));
     }
 
     @Transactional(readOnly = true)

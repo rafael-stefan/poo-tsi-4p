@@ -8,6 +8,7 @@ import com.example.demo.entity.UsuarioEntity;
 import com.example.demo.security.UsuarioAutenticado;
 import com.example.demo.security.UsuarioSessao;
 import com.example.demo.security.jwt.revogar.TokenRevogadoEntity;
+import com.example.demo.security.limite.LimiteRequisicoes;
 import com.example.demo.security.jwt.revogar.TokenRevogadoRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,12 +27,14 @@ public class AuthService {
     private final UsuarioService usuarioService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final LimiteRequisicoes limiteRequisicoes;
 
-    public AuthService(UsuarioService usuarioService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenRevogadoRepository tokenRevogadoRepository) {
+    public AuthService(UsuarioService usuarioService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, TokenRevogadoRepository tokenRevogadoRepository, LimiteRequisicoes limiteRequisicoes) {
         this.usuarioService = usuarioService;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.tokenRevogadoRepository = tokenRevogadoRepository;
+        this.limiteRequisicoes = limiteRequisicoes;
     }
 
     public CadastroResponse cadastrar(RegisterRequest request) {
@@ -52,6 +55,7 @@ public class AuthService {
     }
 
     public UsuarioAutenticado autenticar(LoginRequest request) {
+        limiteRequisicoes.verificarLogin(request.email());
         try {
             Authentication auth = authenticationManager.authenticate(
                     UsernamePasswordAuthenticationToken.unauthenticated(request.email(), request.senha()));
