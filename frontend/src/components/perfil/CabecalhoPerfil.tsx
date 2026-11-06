@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Avatar from "@/components/comum/Avatar";
@@ -16,6 +17,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { useUsuario } from "@/contexto/UsuarioContexto";
 import { api, ErroApi } from "@/lib/api";
 import { formatarData } from "@/lib/formato";
 import type { AmizadeResumo, UsuarioResumo } from "@/lib/tipos";
@@ -27,6 +29,8 @@ type CabecalhoPerfilProps = {
 
 export default function CabecalhoPerfil({ usuario, amizade }: CabecalhoPerfilProps) {
   const router = useRouter();
+  const { usuario: logado } = useUsuario();
+  const ehMeuPerfil = logado !== null && logado.id === usuario.id;
   const [desfazendo, setDesfazendo] = useState(false);
 
   async function desfazerAmizade() {
@@ -55,6 +59,13 @@ export default function CabecalhoPerfil({ usuario, amizade }: CabecalhoPerfilPro
           </span>
         )}
       </div>
+      {ehMeuPerfil && (
+        <div className="col-span-full md:col-auto">
+          <Button asChild variant="outline">
+            <Link href="/perfil/editar">Editar perfil</Link>
+          </Button>
+        </div>
+      )}
       {amizade !== null && (
         <div className="col-span-full md:col-auto">
           <AlertDialog>

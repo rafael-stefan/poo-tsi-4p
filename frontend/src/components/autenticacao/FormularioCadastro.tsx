@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import CampoComErro from "@/components/autenticacao/CampoComErro";
+import RegrasSenha, { senhaCumpreRegras } from "@/components/autenticacao/RegrasSenha";
 import { Button } from "@/components/ui/button";
 import { useUsuario } from "@/contexto/UsuarioContexto";
 import { api, ErroApi } from "@/lib/api";
@@ -28,12 +29,7 @@ export default function FormularioCadastro() {
     }
   }, [usuario, enviando, router]);
 
-  const regras = [
-    { texto: "Entre 8 e 72 caracteres", cumprida: senha.length >= 8 && senha.length <= 72 },
-    { texto: "Pelo menos uma letra", cumprida: /[A-Za-z]/.test(senha) },
-    { texto: "Pelo menos um número", cumprida: /\d/.test(senha) },
-  ];
-  const senhaValida = regras.every((regra) => regra.cumprida);
+  const senhaValida = senhaCumpreRegras(senha);
 
   async function enviar(evento: React.FormEvent<HTMLFormElement>) {
     evento.preventDefault();
@@ -115,22 +111,7 @@ export default function FormularioCadastro() {
         erros={erros.senha}
         autoComplete="new-password"
       >
-        <ul className="grid gap-0.5 font-meta text-[11px] tracking-[0.04em] uppercase">
-          {regras.map((regra) => (
-            <li
-              key={regra.texto}
-              className={
-                regra.cumprida
-                  ? "text-zerado"
-                  : tentouEnviar
-                    ? "text-destructive"
-                    : "text-muted-foreground"
-              }
-            >
-              {regra.cumprida ? "✓" : "○"} {regra.texto}
-            </li>
-          ))}
-        </ul>
+        <RegrasSenha senha={senha} tentouEnviar={tentouEnviar} />
       </CampoComErro>
       <CampoComErro
         id="confirmacao"
