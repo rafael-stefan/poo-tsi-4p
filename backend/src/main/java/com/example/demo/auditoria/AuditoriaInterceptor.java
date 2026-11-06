@@ -2,6 +2,7 @@ package com.example.demo.auditoria;
 
 import com.example.demo.security.UsuarioSessao;
 import com.example.demo.security.limite.IpCliente;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
@@ -25,15 +26,16 @@ public class AuditoriaInterceptor implements HandlerInterceptor {
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        if (!METODOS_AUDITADOS.contains(request.getMethod())) {
+        if (!METODOS_AUDITADOS.contains(request.getMethod()) || request.getDispatcherType() == DispatcherType.ERROR) {
             return;
         }
+        int status = ex != null ? HttpServletResponse.SC_INTERNAL_SERVER_ERROR : response.getStatus();
         logAuditoriaRepository.save(new LogAuditoriaEntity(
                 identificarUsuario(request),
                 IpCliente.de(request),
                 request.getMethod(),
                 request.getRequestURI(),
-                response.getStatus()));
+                status));
     }
 
     private Integer identificarUsuario(HttpServletRequest request) {
