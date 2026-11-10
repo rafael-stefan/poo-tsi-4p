@@ -29,11 +29,6 @@ public class UsuarioController {
         this.limiteRequisicoes = limiteRequisicoes;
     }
 
-    @GetMapping
-    public String getUsuarios() {
-        return "Lista de usuários";
-    }
-
     @GetMapping("/me")
     public UsuarioResponse me(@IdSolicitante Integer idSolicitante) {
         return usuarioService.buscarPerfil(idSolicitante);
